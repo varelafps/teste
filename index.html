@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>REGISTRAR e CONSULTAR</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f6ea07;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgb(0, 0, 0);
+            padding: 5px; /* Alterado */
+            width: 100%;
+            max-width: 250px; /* Alterado */
+            border: 2px solid #000000;
+            position: relative;
+        }
+        h1 {
+    color: #000000;
+    text-align: center;
+    font-size: 16px; /* Diminuído de 22px para 18px */
+    margin-top: 35px; /* Adicionado para mover o título para baixo */
+    margin-bottom: 10px;
+}
+
+
+        label {
+            display: block;
+            margin-top: 5px; /* Alterado */
+            font-weight: bold;
+            color: #000000;
+        }
+        input[type="text"], select {
+            width: 100%;
+            padding: 5px; /* Alterado */
+            margin-top: 3px; /* Alterado */
+            border-radius: 5px;
+            border: 1px solid #7e7b7b;
+            box-sizing: border-box;
+            font-size: 14px;
+            color: #000000;
+        }
+        button {
+            width: 100%;
+            padding: 8px; /* Alterado */
+            background-color: #2d348b;
+            color: rgb(255, 255, 255);
+            font-size: 16px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-top: 10px; /* Alterado */
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #000000;
+        }
+        .section {
+            margin-top: 20px; /* Alterado */
+        }
+        input[readonly] {
+            background-color: #ffffff;
+            color: #000000;
+        }
+        .logo {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+        }
+        .logo img {
+            width: 120px;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="logo">
+        <img src="https://th.bing.com/th/id/R.9e28952a03d4960aba492504707d99d8?rik=P5WmTqyYa4K4jg&riu=http%3a%2f%2fwww.fiedler.com.br%2fwp-content%2fuploads%2f2017%2f06%2flogo-fiedler.png&ehk=t6aFhwLRsnd3GWamuHRQoIdtFVDr78xQvfgYKlvoHp4%3d&risl=&pid=ImgRaw&r=0" alt="Logo Fiedler" width="150px" height="auto">
+    </div>
+
+    <h1>REGISTRAR ORDEM DE VENDA</h1>
+
+    <!-- Formulário de registro -->
+    <form id="form-ov">
+        <label for="numero-ov">NUMERO DA OV:</label>
+        <input type="text" id="numero-ov" name="numero-ov" required>
+
+        <label for="localizacao">LOCALIZAÇÃO:</label>
+        <input type="text" id="localizacao" name="localizacao" required>
+
+        <label for="estoquista">ESTOQUISTA:</label>
+        <select id="estoquista" name="estoquista" required>
+            <option value="">Selecione o Estoquista</option>
+            <option value="1">1 - Gebien</option>
+            <option value="2">2 - Luiz</option>
+            <option value="4">4 - Jackson</option>
+            <option value="5">5 - Carlos</option>
+            <option value="6">6 - Kauã</option>
+            <option value="7">7 - Schermann</option>
+            <option value="8">8 - Thiago</option>
+            <option value="10">10 - Thomas</option>
+            <option value="11">11 - Externo</option>
+        </select>
+
+        <button type="submit">REGISTRAR</button>
+    </form>
+
+    <div class="section">
+        <h1>CONSULTAR LOCALIZAÇÃO</h1>
+
+        <!-- Formulário de consulta -->
+        <form id="form-localizacao">
+            <label for="numero-ov-consulta">NUMERO DA OV:</label>
+            <input type="text" id="numero-ov-consulta" name="numero-ov-consulta" required>
+
+            <label for="localizacao-display">LOCALIZAÇÃO:</label>
+            <input type="text" id="localizacao-display" name="localizacao-display" readonly required>
+
+            <label for="estoquista-display">ESTOQUISTA:</label>
+            <input type="text" id="estoquista-display" name="estoquista-display" readonly required>
+
+            <label for="data-display">DATA:</label>
+            <input type="text" id="data-display" name="data-display" readonly required>
+
+            <label for="hora-display">HORA:</label>
+            <input type="text" id="hora-display" name="hora-display" readonly required>
+        </form>
+    </div>
+
+    <!-- Botão para redirecionar -->
+    <button id="botao-redirecionar" type="button">IR PARA OUTRA PÁGINA</button>
+
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
+    import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-database.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyA0HRXo7DQO-hBiEYcLoHDp4aeCr8m5fbY",
+        authDomain: "banco-de-dados-58326.firebaseapp.com",
+        databaseURL: "https://banco-de-dados-58326-default-rtdb.firebaseio.com",
+        projectId: "banco-de-dados-58326",
+        storageBucket: "banco-de-dados-58326.appspot.com",
+        messagingSenderId: "65412346301",
+        appId: "1:65412346301:web:b0ef7ff01e8c935841e2d4",
+        measurementId: "G-K7TSSDVQ88"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const database = getDatabase(app);
+
+    function obterNomeEstoquista(codigoEstoquista) {
+        const estoquistas = {
+            "1": "Gebien",
+            "2": "Luiz",
+            "4": "Jackson",
+            "5": "Carlos",
+            "6": "Kauã",
+            "7": "Schermann",
+            "8": "Thiago",
+            "10": "Thomas",
+            "11": "Externo"
+        };
+        return estoquistas[codigoEstoquista] || "Desconhecido";
+    }
+
+    async function contarSubordens(numeroOv) {
+        const dbRef = ref(database);
+        const snapshot = await get(child(dbRef, registrosOV/${numeroOv})); 
+
+        if (snapshot.exists()) {
+            const registros = snapshot.val();
+            return Object.keys(registros).length;
+        }
+        return 0;
+    }
+
+    async function salvarRegistroOV(numeroOv, localizacao, estoquista) {
+        const subOrderCount = await contarSubordens(numeroOv);
+        const novaSubOrdem = ${numeroOv}-${subOrderCount + 1}; 
+        
+        const dataAtual = new Date();
+        const data = dataAtual.toLocaleDateString();
+        const hora = dataAtual.toLocaleTimeString();
+
+        const nomeEstoquista = obterNomeEstoquista(estoquista);
+
+        set(ref(database, registrosOV/${numeroOv}/${novaSubOrdem}), { 
+            Localizacao: localizacao,
+            Estoquista: nomeEstoquista,
+            Data: data,
+            Hora: hora
+        }).then(() => {
+            alert("Registro de OV feito com sucesso!");
+        }).catch((error) => {
+            console.error("Erro ao salvar no Firebase: ", error);
+        });
+    }
+
+    async function consultarRegistroOV(numeroOv) {
+        const dbRef = ref(database);
+        const snapshot = await get(child(dbRef, registrosOV/${numeroOv}));
+
+        if (snapshot.exists()) {
+            const registros = snapshot.val();
+            const chaves = Object.keys(registros);
+            const ultimaChave = chaves.sort((a, b) => {
+                const numeroA = parseInt(a.split('-')[1]);
+                const numeroB = parseInt(b.split('-')[1]);
+                return numeroB - numeroA;
+            })[0];
+
+            return registros[ultimaChave];
+        }
+
+        return null;
+    }
+
+    const formOv = document.getElementById('form-ov');
+    const numeroOvInput = document.getElementById('numero-ov');
+    const localizacaoInput = document.getElementById('localizacao');
+    const estoquistaSelect = document.getElementById('estoquista');
+
+    formOv.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const numeroOv = numeroOvInput.value;
+        const localizacao = localizacaoInput.value;
+        const estoquista = estoquistaSelect.value;
+
+        if (numeroOv && localizacao && estoquista) {
+            await salvarRegistroOV(numeroOv, localizacao, estoquista);
+            formOv.reset();
+        } else {
+            alert("Por favor, preencha todos os campos.");
+        }
+    });
+
+    const formLocalizacao = document.getElementById('form-localizacao');
+    const numeroOvConsultaInput = document.getElementById('numero-ov-consulta');
+    const localizacaoDisplay = document.getElementById('localizacao-display');
+    const estoquistaDisplay = document.getElementById('estoquista-display');
+    const dataDisplay = document.getElementById('data-display');
+    const horaDisplay = document.getElementById('hora-display');
+
+    numeroOvConsultaInput.addEventListener('change', async () => {
+        const numeroOv = numeroOvConsultaInput.value;
+        const registro = await consultarRegistroOV(numeroOv);
+
+        if (registro) {
+            localizacaoDisplay.value = registro.Localizacao;
+            estoquistaDisplay.value = registro.Estoquista;
+            dataDisplay.value = registro.Data;
+            horaDisplay.value = registro.Hora;
+        } else {
+            localizacaoDisplay.value = '';
+            estoquistaDisplay.value = '';
+            dataDisplay.value = '';
+            horaDisplay.value = '';
+            alert("Registro não encontrado.");
+        }
+    });
+
+    // Função para redirecionar
+    const botaoRedirecionar = document.getElementById('botao-redirecionar');
+    botaoRedirecionar.addEventListener('click', () => {
+        window.location.href = 'https://www.youtube.com/watch?v=cpJvtasZkRc';
+    });
+</script>
+
+</body>
+</html>
